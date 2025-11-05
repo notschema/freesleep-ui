@@ -15,6 +15,7 @@ interface DeviceSettings {
   wifiStrength: number;
   currentVersion: string;
   latestVersion: string;
+  useFahrenheit: boolean;
 }
 
 interface PrimingSettings {
@@ -58,6 +59,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       wifiStrength: 100,
       currentVersion: '1.1.8',
       latestVersion: '1.1.9',
+      useFahrenheit: false,
     },
     priming: {
       primeDaily: true,

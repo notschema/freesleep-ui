@@ -1,12 +1,15 @@
 import { GraphPoint } from './types';
 import { getPointColor } from './utils';
+import { getTemperatureUnit } from '@/lib/temperature';
 
 interface TemperatureGraphProps {
   graphPoints: GraphPoint[];
   yAxisLabels: number[];
+  useFahrenheit: boolean;
 }
 
-export default function TemperatureGraph({ graphPoints, yAxisLabels }: TemperatureGraphProps) {
+export default function TemperatureGraph({ graphPoints, yAxisLabels, useFahrenheit }: TemperatureGraphProps) {
+  const tempUnit = getTemperatureUnit(useFahrenheit);
   return (
     <div className="relative rounded-2xl border-2 border-neutral-700/50 p-5 overflow-hidden shadow-2xl">
       <div
@@ -18,9 +21,9 @@ export default function TemperatureGraph({ graphPoints, yAxisLabels }: Temperatu
       <div className="relative">
         <div className="relative h-48 bg-neutral-900/50 rounded-xl border border-neutral-700/50 p-4">
           <div className="absolute left-1 top-4 bottom-8 flex flex-col justify-between text-xs text-gray-500">
-            <span>{yAxisLabels[0]}°C</span>
-            <span>{yAxisLabels[1]}°C</span>
-            <span>{yAxisLabels[2]}°C</span>
+            <span>{yAxisLabels[0]}{tempUnit}</span>
+            <span>{yAxisLabels[1]}{tempUnit}</span>
+            <span>{yAxisLabels[2]}{tempUnit}</span>
           </div>
 
           <div className="ml-8 h-full relative pb-6">

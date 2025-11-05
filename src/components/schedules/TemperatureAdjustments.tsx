@@ -1,9 +1,11 @@
 import { Plus, X, Thermometer, ChevronDown, ChevronUp } from 'lucide-react';
 import { TemperatureAdjustment, TEMP_MIN, TEMP_MAX } from './types';
+import { displayTemp, getTempMin, getTempMax, getTemperatureUnit, fahrenheitToCelsius } from '@/lib/temperature';
 
 interface TemperatureAdjustmentsProps {
   adjustments: TemperatureAdjustment[];
   isOpen: boolean;
+  useFahrenheit: boolean;
   onToggle: () => void;
   onAdd: () => void;
   onRemove: (id: string) => void;
@@ -13,11 +15,20 @@ interface TemperatureAdjustmentsProps {
 export default function TemperatureAdjustments({
   adjustments,
   isOpen,
+  useFahrenheit,
   onToggle,
   onAdd,
   onRemove,
   onUpdate
 }: TemperatureAdjustmentsProps) {
+  const tempUnit = getTemperatureUnit(useFahrenheit);
+  const tempMin = getTempMin(useFahrenheit);
+  const tempMax = getTempMax(useFahrenheit);
+
+  const handleTempChange = (id: string, value: number) => {
+    const celsiusValue = useFahrenheit ? fahrenheitToCelsius(value) : value;
+    onUpdate(id, 'temperature', celsiusValue);
+  };
   return (
     <div className="relative rounded-2xl border-2 border-neutral-700/50 overflow-hidden shadow-2xl">
       <div
@@ -75,13 +86,14 @@ export default function TemperatureAdjustments({
                     <div className="relative">
                       <input
                         type="number"
-                        value={adjustment.temperature}
-                        onChange={(e) => onUpdate(adjustment.id, 'temperature', Number(e.target.value))}
-                        className="w-full bg-neutral-800/50 border border-neutral-700/50 rounded-lg px-3 py-2 pr-7 text-sm text-white text-center focus:outline-none focus:border-blue-500/50"
-                        min={TEMP_MIN}
-                        max={TEMP_MAX}
+                        value={displayTemp(adjustment.temperature, useFahrenheit).toFixed(1)}
+                        onChange={(e) => handleTempChange(adjustment.id, Number(e.target.value))}
+                        className="w-full bg-neutral-800/50 border border-neutral-700/50 rounded-lg px-3 py-2 pr-9 text-sm text-white text-center focus:outline-none focus:border-blue-500/50"
+                        min={tempMin}
+                        max={tempMax}
+                        step={useFahrenheit ? "1" : "0.5"}
                       />
-                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500">°C</span>
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500">{tempUnit}</span>
                     </div>
                   </div>
                   <button

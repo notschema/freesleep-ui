@@ -1,9 +1,11 @@
 import { TEMP_MIN, TEMP_MAX } from './types';
+import { displayTemp, getTempMin, getTempMax, getTemperatureUnit, fahrenheitToCelsius } from '@/lib/temperature';
 
 interface PowerControlsProps {
   powerOnTime: string;
   powerOnTemp: number;
   powerOffTime: string;
+  useFahrenheit: boolean;
   onUpdatePowerOn: (field: 'time' | 'temp', value: string | number) => void;
   onUpdatePowerOff: (time: string) => void;
 }
@@ -12,9 +14,19 @@ export default function PowerControls({
   powerOnTime,
   powerOnTemp,
   powerOffTime,
+  useFahrenheit,
   onUpdatePowerOn,
   onUpdatePowerOff
 }: PowerControlsProps) {
+  const tempUnit = getTemperatureUnit(useFahrenheit);
+  const tempMin = getTempMin(useFahrenheit);
+  const tempMax = getTempMax(useFahrenheit);
+  const displayedTemp = displayTemp(powerOnTemp, useFahrenheit);
+
+  const handleTempChange = (value: number) => {
+    const celsiusValue = useFahrenheit ? fahrenheitToCelsius(value) : value;
+    onUpdatePowerOn('temp', celsiusValue);
+  };
   return (
     <div className="relative rounded-2xl border-2 border-neutral-700/50 p-4 overflow-hidden shadow-2xl">
       <div
@@ -31,20 +43,20 @@ export default function PowerControls({
           />
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-gray-400">Power On Temperature {powerOnTemp}°C</span>
+              <span className="text-xs text-gray-400">Power On Temperature {displayedTemp.toFixed(1)}{tempUnit}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-500">{TEMP_MIN}°C</span>
+              <span className="text-xs text-gray-500">{tempMin.toFixed(1)}{tempUnit}</span>
               <input
                 type="range"
-                min={TEMP_MIN}
-                max={TEMP_MAX}
-                step="0.5"
-                value={powerOnTemp}
-                onChange={(e) => onUpdatePowerOn('temp', Number(e.target.value))}
+                min={tempMin}
+                max={tempMax}
+                step={useFahrenheit ? "1" : "0.5"}
+                value={displayedTemp}
+                onChange={(e) => handleTempChange(Number(e.target.value))}
                 className="flex-1 h-2 bg-neutral-700/50 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:cursor-pointer"
               />
-              <span className="text-xs text-gray-500">43.5°C</span>
+              <span className="text-xs text-gray-500">{tempMax.toFixed(1)}{tempUnit}</span>
             </div>
           </div>
         </div>

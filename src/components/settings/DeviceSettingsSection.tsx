@@ -10,9 +10,11 @@ interface DeviceSettingsSectionProps {
   wifiStrength: number;
   currentVersion: string;
   latestVersion: string;
+  useFahrenheit: boolean;
   onTimeZoneChange: (value: string) => void;
   onRebootDailyChange: (value: boolean) => void;
   onLedBrightnessChange: (value: number) => void;
+  onUseFahrenheitChange: (value: boolean) => void;
 }
 
 export default function DeviceSettingsSection({
@@ -22,9 +24,11 @@ export default function DeviceSettingsSection({
   wifiStrength,
   currentVersion,
   latestVersion,
+  useFahrenheit,
   onTimeZoneChange,
   onRebootDailyChange,
-  onLedBrightnessChange
+  onLedBrightnessChange,
+  onUseFahrenheitChange
 }: DeviceSettingsSectionProps) {
   const updateAvailable = currentVersion !== latestVersion;
 
@@ -48,6 +52,17 @@ export default function DeviceSettingsSection({
         description="Automatically restart the device once per day to maintain optimal performance. Reboot occurs 1 hour before the scheduled prime time."
       >
         <ToggleSwitch checked={rebootDaily} onChange={onRebootDailyChange} />
+      </SettingRow>
+
+      <SettingRow
+        label="Temperature Unit"
+        description="Choose between Celsius and Fahrenheit for temperature display."
+      >
+        <div className="flex items-center gap-2">
+          <span className={`text-sm ${ !useFahrenheit ? 'text-white font-semibold' : 'text-gray-400'}`}>°C</span>
+          <ToggleSwitch checked={useFahrenheit} onChange={onUseFahrenheitChange} />
+          <span className={`text-sm ${useFahrenheit ? 'text-white font-semibold' : 'text-gray-400'}`}>°F</span>
+        </div>
       </SettingRow>
 
       <SettingRow label="LED Brightness">

@@ -1,6 +1,7 @@
 import { DaySchedule, GraphPoint } from './types';
+import { displayTemp } from '@/lib/temperature';
 
-export function getGraphData(currentDay: DaySchedule): GraphPoint[] {
+export function getGraphData(currentDay: DaySchedule, useFahrenheit = false): GraphPoint[] {
   const allPoints: { time: string; temp: number; type: 'on' | 'off' | 'adjust' }[] = [];
 
   allPoints.push({ time: currentDay.powerOnTime, temp: currentDay.powerOnTemp, type: 'on' });
@@ -24,17 +25,22 @@ export function getGraphData(currentDay: DaySchedule): GraphPoint[] {
     const timeInMinutes = hours * 60 + minutes;
     const x = (timeInMinutes / 1440) * 100;
     const y = point.type === 'off' ? 100 : 100 - ((point.temp - minTemp) / tempRange) * 100;
-    return { x, y, time: point.time, temp: point.temp, type: point.type };
+    const displayedTemp = point.type === 'off' ? 0 : Math.round(displayTemp(point.temp, useFahrenheit));
+    return { x, y, time: point.time, temp: displayedTemp, type: point.type };
   });
 }
 
-export function getGraphYAxisLabels(currentDay: DaySchedule): number[] {
+export function getGraphYAxisLabels(currentDay: DaySchedule, useFahrenheit = false): number[] {
   const temps = [currentDay.powerOnTemp, ...currentDay.adjustments.map(a => a.temperature)];
   const maxTemp = Math.max(...temps, 30);
   const minTemp = 16;
   const midTemp = Math.round((maxTemp + minTemp) / 2);
 
-  return [maxTemp, midTemp, minTemp];
+  return [
+    Math.round(displayTemp(maxTemp, useFahrenheit)),
+    Math.round(displayTemp(midTemp, useFahrenheit)),
+    Math.round(displayTemp(minTemp, useFahrenheit))
+  ];
 }
 
 export function getPointColor(type: 'on' | 'off' | 'adjust'): string {

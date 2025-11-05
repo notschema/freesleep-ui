@@ -37,8 +37,8 @@ export default function SchedulesPage() {
   const [selectedDaysForCopy, setSelectedDaysForCopy] = useState<number[]>([]);
 
   const schedulesWithAdjustments = weekSchedules.map(day => day.adjustments.length > 0);
-  const graphPoints = getGraphData(currentDay);
-  const yAxisLabels = getGraphYAxisLabels(currentDay);
+  const graphPoints = getGraphData(currentDay, settings.device.useFahrenheit);
+  const yAxisLabels = getGraphYAxisLabels(currentDay, settings.device.useFahrenheit);
 
   const handleToggleCopyDay = (dayIndex: number) => {
     setSelectedDaysForCopy(prev =>
@@ -84,12 +84,13 @@ export default function SchedulesPage() {
         </div>
       </div>
 
-      <TemperatureGraph graphPoints={graphPoints} yAxisLabels={yAxisLabels} />
+      <TemperatureGraph graphPoints={graphPoints} yAxisLabels={yAxisLabels} useFahrenheit={settings.device.useFahrenheit} />
 
       <PowerControls
         powerOnTime={currentDay.powerOnTime}
         powerOnTemp={currentDay.powerOnTemp}
         powerOffTime={currentDay.powerOffTime}
+        useFahrenheit={settings.device.useFahrenheit}
         onUpdatePowerOn={updatePowerOn}
         onUpdatePowerOff={updatePowerOff}
       />
@@ -97,6 +98,7 @@ export default function SchedulesPage() {
       <TemperatureAdjustments
         adjustments={currentDay.adjustments}
         isOpen={adjustmentsOpen}
+        useFahrenheit={settings.device.useFahrenheit}
         onToggle={() => setAdjustmentsOpen(!adjustmentsOpen)}
         onAdd={addAdjustment}
         onRemove={removeAdjustment}

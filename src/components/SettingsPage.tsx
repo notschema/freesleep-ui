@@ -29,9 +29,11 @@ export default function SettingsPage() {
         wifiStrength={settings.device.wifiStrength}
         currentVersion={settings.device.currentVersion}
         latestVersion={settings.device.latestVersion}
+        useFahrenheit={settings.device.useFahrenheit}
         onTimeZoneChange={(value) => updateDeviceSetting('timeZone', value)}
         onRebootDailyChange={(value) => updateDeviceSetting('rebootDaily', value)}
         onLedBrightnessChange={(value) => updateDeviceSetting('ledBrightness', value)}
+        onUseFahrenheitChange={(value) => updateDeviceSetting('useFahrenheit', value)}
       />
 
       <PrimingSection

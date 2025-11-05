@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { DaySchedule, TemperatureAdjustment, SideSchedules, DAYS } from './types';
 
-const createDefaultSchedules = (): DaySchedule[] =>
+const createDefaultSchedules = (side: 'left' | 'right'): DaySchedule[] =>
   DAYS.map((day, index) => ({
     day,
     enabled: true,
-    powerOnTime: '21:00',
-    powerOnTemp: 28,
-    powerOffTime: '09:00',
+    powerOnTime: side === 'left' ? '21:00' : '22:00',
+    powerOnTemp: side === 'left' ? 28 : 26,
+    powerOffTime: side === 'left' ? '09:00' : '08:00',
     adjustments: index === 3 ? [
-      { id: '1', time: '22:00', temperature: 25 },
-      { id: '2', time: '00:00', temperature: 21 },
+      { id: `${side}-1`, time: side === 'left' ? '22:00' : '23:00', temperature: side === 'left' ? 25 : 24 },
+      { id: `${side}-2`, time: '00:00', temperature: side === 'left' ? 21 : 22 },
     ] : []
   }));
 
@@ -18,8 +18,8 @@ export function useSchedules() {
   const [selectedDayIndex, setSelectedDayIndex] = useState(3);
   const [selectedSide, setSelectedSide] = useState<'left' | 'right'>('left');
   const [sideSchedules, setSideSchedules] = useState<SideSchedules>({
-    left: createDefaultSchedules(),
-    right: createDefaultSchedules(),
+    left: createDefaultSchedules('left'),
+    right: createDefaultSchedules('right'),
   });
 
   const weekSchedules = sideSchedules[selectedSide];

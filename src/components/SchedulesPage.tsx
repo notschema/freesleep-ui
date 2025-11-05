@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Bell } from 'lucide-react';
 import ToggleSwitch from '@/components/ui/toggle-switch';
 import DayPicker from './schedules/DayPicker';
+import SidePicker from './schedules/SidePicker';
 import TemperatureGraph from './schedules/TemperatureGraph';
 import PowerControls from './schedules/PowerControls';
 import TemperatureAdjustments from './schedules/TemperatureAdjustments';
@@ -14,6 +15,8 @@ export default function SchedulesPage() {
   const {
     selectedDayIndex,
     setSelectedDayIndex,
+    selectedSide,
+    setSelectedSide,
     weekSchedules,
     currentDay,
     toggleDayEnabled,
@@ -55,6 +58,11 @@ export default function SchedulesPage() {
         <h2 className="text-2xl sm:text-3xl font-light tracking-tight mb-1">Schedules</h2>
         <p className="text-xs text-gray-400">Automated temperature control</p>
       </div>
+
+      <SidePicker
+        selectedSide={selectedSide}
+        onSelectSide={setSelectedSide}
+      />
 
       <DayPicker
         selectedDayIndex={selectedDayIndex}

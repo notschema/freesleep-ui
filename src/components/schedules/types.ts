@@ -13,6 +13,11 @@ export interface DaySchedule {
   adjustments: TemperatureAdjustment[];
 }
 
+export interface SideSchedules {
+  left: DaySchedule[];
+  right: DaySchedule[];
+}
+
 export interface GraphPoint {
   x: number;
   y: number;

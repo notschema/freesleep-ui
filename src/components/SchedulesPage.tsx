@@ -64,10 +64,7 @@ export default function SchedulesPage() {
 
       <div className="relative rounded-2xl border-2 border-neutral-700/50 p-4 overflow-hidden shadow-2xl">
         <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(to bottom, rgb(38 38 38 / 0.5) 0%, rgb(${currentDay.enabled ? '16 185 129' : '107 114 128'} / 0.1) 100%)`
-          }}
+          className="absolute inset-0 bg-neutral-800/30"
         />
         <div className="relative flex items-center justify-between">
           <span className="text-sm font-semibold text-white">Enabled</span>
@@ -97,8 +94,8 @@ export default function SchedulesPage() {
       <CollapsibleSection
         title="Vibration Alarm"
         icon={<Bell className="w-5 h-5" />}
-        iconColor="text-purple-400"
-        gradientColor="rgb(168 85 247 / 0.1)"
+        iconColor="text-gray-400"
+        gradientColor="rgb(64 64 64 / 0.1)"
         isOpen={vibrationOpen}
         onToggle={() => setVibrationOpen(!vibrationOpen)}
       >

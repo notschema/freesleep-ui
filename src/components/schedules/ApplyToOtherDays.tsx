@@ -24,8 +24,8 @@ export default function ApplyToOtherDays({
     <CollapsibleSection
       title="Apply Settings to Other Days"
       icon={<CalendarIcon className="w-5 h-5" />}
-      iconColor="text-blue-400"
-      gradientColor="rgb(59 130 246 / 0.1)"
+      iconColor="text-gray-400"
+      gradientColor="rgb(64 64 64 / 0.1)"
       isOpen={isOpen}
       onToggle={onToggle}
     >

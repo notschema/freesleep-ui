@@ -7,21 +7,33 @@ import DataPage from '@/components/DataPage';
 import SchedulesPage from '@/components/SchedulesPage';
 import SettingsPage from '@/components/SettingsPage';
 import { SettingsProvider, useSettingsContext } from '@/contexts/SettingsContext';
+import { displayTemp, celsiusToFahrenheit, fahrenheitToCelsius } from '@/lib/temperature';
 
 function AppContent() {
   const { settings } = useSettingsContext();
   const [activeZone, setActiveZone] = useState<'left' | 'right'>('left');
-  const [leftTemp, setLeftTemp] = useState(72);
-  const [rightTemp, setRightTemp] = useState(70);
+  const [leftTemp, setLeftTemp] = useState(22);
+  const [rightTemp, setRightTemp] = useState(21);
   const [leftActive, setLeftActive] = useState(true);
   const [rightActive, setRightActive] = useState(false);
   const [currentPage, setCurrentPage] = useState<'temperature' | 'schedules' | 'data' | 'status' | 'settings'>('temperature');
 
-  const presets = [
-    { name: 'Cool', temp: 65 },
-    { name: 'Eco', temp: 68 },
-    { name: 'Comfort', temp: 72 },
-    { name: 'Warm', temp: 76 },
+  const useFahrenheit = settings.device.useFahrenheit;
+  const tempUnit = useFahrenheit ? '°F' : '°C';
+  const tempMin = useFahrenheit ? celsiusToFahrenheit(13) : 13;
+  const tempMax = useFahrenheit ? celsiusToFahrenheit(43) : 43;
+  const tempStep = useFahrenheit ? 1 : 0.5;
+
+  const presets = useFahrenheit ? [
+    { name: 'Cool', temp: fahrenheitToCelsius(65) },
+    { name: 'Eco', temp: fahrenheitToCelsius(68) },
+    { name: 'Comfort', temp: fahrenheitToCelsius(72) },
+    { name: 'Warm', temp: fahrenheitToCelsius(76) },
+  ] : [
+    { name: 'Cool', temp: 18 },
+    { name: 'Eco', temp: 20 },
+    { name: 'Comfort', temp: 22 },
+    { name: 'Warm', temp: 24 },
   ];
 
   const applyPreset = (temp: number) => {
@@ -37,8 +49,13 @@ function AppContent() {
   const isCurrentActive = activeZone === 'left' ? leftActive : rightActive;
   const bothActive = leftActive && rightActive;
 
-  const getGradientColors = (temp: number) => {
-    const percentage = (temp - 55) / (110 - 55);
+  const displayedCurrentTemp = Math.round(displayTemp(currentTemp, useFahrenheit));
+  const displayedLeftTemp = Math.round(displayTemp(leftTemp, useFahrenheit));
+  const displayedRightTemp = Math.round(displayTemp(rightTemp, useFahrenheit));
+
+  const getGradientColors = (tempCelsius: number) => {
+    const tempF = celsiusToFahrenheit(tempCelsius);
+    const percentage = (tempF - 55) / (110 - 55);
 
     if (percentage < 0.25) {
       return { from: 'rgb(29 78 216 / 0.35)', to: 'rgb(56 189 248 / 0.25)' };
@@ -113,10 +130,10 @@ function AppContent() {
 
               <div className="space-y-1 sm:space-y-2">
                 <div className="text-3xl sm:text-6xl font-extralight tracking-tight">
-                  {leftTemp}<span className="text-xl sm:text-4xl text-gray-500">°F</span>
+                  {displayedLeftTemp}<span className="text-xl sm:text-4xl text-gray-500">{tempUnit}</span>
                 </div>
                 <div className={cn("text-xs sm:text-sm", leftActive ? "text-blue-400" : "text-gray-500")}>
-                  {leftActive ? `→ ${leftTemp - 4}°F` : 'Inactive'}
+                  {leftActive ? `→ ${(displayedLeftTemp - (useFahrenheit ? 4 : 2))}${tempUnit}` : 'Inactive'}
                 </div>
               </div>
             </div>
@@ -152,10 +169,10 @@ function AppContent() {
 
               <div className="space-y-1 sm:space-y-2">
                 <div className="text-3xl sm:text-6xl font-extralight tracking-tight">
-                  {rightTemp}<span className="text-xl sm:text-4xl text-gray-500">°F</span>
+                  {displayedRightTemp}<span className="text-xl sm:text-4xl text-gray-500">{tempUnit}</span>
                 </div>
                 <div className={cn("text-xs sm:text-sm", rightActive ? "text-blue-400" : "text-gray-500")}>
-                  {rightActive ? `→ ${rightTemp - 4}°F` : 'Inactive'}
+                  {rightActive ? `→ ${(displayedRightTemp - (useFahrenheit ? 4 : 2))}${tempUnit}` : 'Inactive'}
                 </div>
               </div>
             </div>
@@ -219,11 +236,11 @@ function AppContent() {
             <div className="w-full max-w-md space-y-6 sm:space-y-8">
               <div className="flex items-center justify-center gap-4 sm:gap-8 md:gap-12">
                 <button
-                  onClick={() => isCurrentActive && currentTemp > 55 && setCurrentTemp(currentTemp - 1)}
-                  disabled={!isCurrentActive || currentTemp <= 55}
+                  onClick={() => isCurrentActive && currentTemp > tempMin && setCurrentTemp(currentTemp - tempStep)}
+                  disabled={!isCurrentActive || currentTemp <= tempMin}
                   className={cn(
                     "w-16 h-16 sm:w-20 sm:h-20 rounded-3xl flex items-center justify-center transition-all duration-300 backdrop-blur-xl border border-white/10 shadow-xl",
-                    isCurrentActive && currentTemp > 55
+                    isCurrentActive && currentTemp > tempMin
                       ? "bg-gradient-to-br from-white/10 to-white/5 hover:from-white/15 hover:to-white/10 text-white hover:scale-105 active:scale-95 shadow-black/20"
                       : "bg-white/5 border-white/5 text-gray-600 cursor-not-allowed"
                   )}
@@ -233,7 +250,7 @@ function AppContent() {
 
                 <div className="text-center">
                   <div className="text-7xl sm:text-8xl md:text-9xl font-extralight tracking-tighter leading-none">
-                    {currentTemp}<span className="text-4xl sm:text-5xl md:text-6xl text-gray-400 ml-1 sm:ml-2">°F</span>
+                    {displayedCurrentTemp}<span className="text-4xl sm:text-5xl md:text-6xl text-gray-400 ml-1 sm:ml-2">{tempUnit}</span>
                   </div>
                   <div
                     className={cn(
@@ -241,16 +258,16 @@ function AppContent() {
                       isCurrentActive ? "text-blue-400" : "text-gray-600"
                     )}
                   >
-                    {isCurrentActive ? `Target ${currentTemp - 4}°F` : 'Zone Inactive'}
+                    {isCurrentActive ? `Target ${displayedCurrentTemp - (useFahrenheit ? 4 : 2)}${tempUnit}` : 'Zone Inactive'}
                   </div>
                 </div>
 
                 <button
-                  onClick={() => isCurrentActive && currentTemp < 110 && setCurrentTemp(currentTemp + 1)}
-                  disabled={!isCurrentActive || currentTemp >= 110}
+                  onClick={() => isCurrentActive && currentTemp < tempMax && setCurrentTemp(currentTemp + tempStep)}
+                  disabled={!isCurrentActive || currentTemp >= tempMax}
                   className={cn(
                     "w-16 h-16 sm:w-20 sm:h-20 rounded-3xl flex items-center justify-center transition-all duration-300 backdrop-blur-xl border border-white/10 shadow-xl",
-                    isCurrentActive && currentTemp < 110
+                    isCurrentActive && currentTemp < tempMax
                       ? "bg-gradient-to-br from-white/10 to-white/5 hover:from-white/15 hover:to-white/10 text-white hover:scale-105 active:scale-95 shadow-black/20"
                       : "bg-white/5 border-white/5 text-gray-600 cursor-not-allowed"
                   )}
@@ -262,10 +279,11 @@ function AppContent() {
               <div className="px-4">
                 <input
                   type="range"
-                  min="55"
-                  max="110"
+                  min={tempMin}
+                  max={tempMax}
+                  step={tempStep}
                   value={currentTemp}
-                  onChange={(e) => isCurrentActive && setCurrentTemp(parseInt(e.target.value))}
+                  onChange={(e) => isCurrentActive && setCurrentTemp(parseFloat(e.target.value))}
                   disabled={!isCurrentActive}
                   className={cn(
                     "w-full h-3 rounded-full appearance-none cursor-pointer transition-all duration-300 focus:outline-none",
@@ -284,14 +302,14 @@ function AppContent() {
                   )}
                   style={{
                     background: isCurrentActive
-                      ? `linear-gradient(to right, ${currentGradient.from.replace('0.35', '0.5')} 0%, ${currentGradient.to.replace('0.25', '0.4')} ${((currentTemp - 55) / (110 - 55)) * 100}%, rgba(255, 255, 255, 0.08) ${((currentTemp - 55) / (110 - 55)) * 100}%, rgba(255, 255, 255, 0.08) 100%)`
+                      ? `linear-gradient(to right, ${currentGradient.from.replace('0.35', '0.5')} 0%, ${currentGradient.to.replace('0.25', '0.4')} ${((currentTemp - tempMin) / (tempMax - tempMin)) * 100}%, rgba(255, 255, 255, 0.08) ${((currentTemp - tempMin) / (tempMax - tempMin)) * 100}%, rgba(255, 255, 255, 0.08) 100%)`
                       : 'rgba(255, 255, 255, 0.05)'
                   }}
                 />
 
                 <div className="flex justify-between mt-4 px-1">
-                  <span className="text-sm sm:text-base text-gray-500 font-medium">55°</span>
-                  <span className="text-sm sm:text-base text-gray-500 font-medium">110°</span>
+                  <span className="text-sm sm:text-base text-gray-500 font-medium">{Math.round(tempMin)}°</span>
+                  <span className="text-sm sm:text-base text-gray-500 font-medium">{Math.round(tempMax)}°</span>
                 </div>
               </div>
 
@@ -311,7 +329,7 @@ function AppContent() {
                       )}
                     >
                       <div className="text-xs font-semibold mb-1">{preset.name}</div>
-                      <div className="text-xl font-light">{preset.temp}°</div>
+                      <div className="text-xl font-light">{Math.round(displayTemp(preset.temp, useFahrenheit))}°</div>
                     </button>
                   ))}
                 </div>

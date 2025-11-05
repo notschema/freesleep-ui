@@ -3,9 +3,11 @@ import { cn } from '@/lib/utils';
 interface SidePickerProps {
   selectedSide: 'left' | 'right';
   onSelectSide: (side: 'left' | 'right') => void;
+  leftSideName: string;
+  rightSideName: string;
 }
 
-export default function SidePicker({ selectedSide, onSelectSide }: SidePickerProps) {
+export default function SidePicker({ selectedSide, onSelectSide, leftSideName, rightSideName }: SidePickerProps) {
   return (
     <div className="relative rounded-2xl border-2 border-neutral-700/50 p-1 overflow-hidden shadow-2xl">
       <div className="absolute inset-0 bg-neutral-800/30" />
@@ -19,7 +21,7 @@ export default function SidePicker({ selectedSide, onSelectSide }: SidePickerPro
               : "text-gray-400 hover:text-gray-300 hover:bg-neutral-800/50"
           )}
         >
-          Left Side
+          {leftSideName}
         </button>
         <button
           onClick={() => onSelectSide('right')}
@@ -30,7 +32,7 @@ export default function SidePicker({ selectedSide, onSelectSide }: SidePickerPro
               : "text-gray-400 hover:text-gray-300 hover:bg-neutral-800/50"
           )}
         >
-          Right Side
+          {rightSideName}
         </button>
       </div>
     </div>

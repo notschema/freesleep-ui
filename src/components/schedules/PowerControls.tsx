@@ -18,10 +18,7 @@ export default function PowerControls({
   return (
     <div className="relative rounded-2xl border-2 border-neutral-700/50 p-4 overflow-hidden shadow-2xl">
       <div
-        className="absolute inset-0"
-        style={{
-          background: 'linear-gradient(to bottom, rgb(38 38 38 / 0.5) 0%, rgb(59 130 246 / 0.05) 100%)'
-        }}
+        className="absolute inset-0 bg-neutral-800/30"
       />
       <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-3">

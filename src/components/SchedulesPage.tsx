@@ -10,8 +10,10 @@ import ApplyToOtherDays from './schedules/ApplyToOtherDays';
 import CollapsibleSection from './schedules/CollapsibleSection';
 import { useSchedules } from './schedules/useSchedules';
 import { getGraphData, getGraphYAxisLabels } from './schedules/utils';
+import { useSettingsContext } from '@/contexts/SettingsContext';
 
 export default function SchedulesPage() {
+  const { settings } = useSettingsContext();
   const {
     selectedDayIndex,
     setSelectedDayIndex,
@@ -62,6 +64,8 @@ export default function SchedulesPage() {
       <SidePicker
         selectedSide={selectedSide}
         onSelectSide={setSelectedSide}
+        leftSideName={settings.leftSide.name}
+        rightSideName={settings.rightSide.name}
       />
 
       <DayPicker

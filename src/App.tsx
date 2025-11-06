@@ -45,7 +45,16 @@ function AppContent() {
   };
 
   const currentTemp = activeZone === 'left' ? leftTemp : rightTemp;
-  const setCurrentTemp = activeZone === 'left' ? setLeftTemp : setRightTemp;
+  const setCurrentTemp = (temp: number) => {
+    if (bothActive) {
+      setLeftTemp(temp);
+      setRightTemp(temp);
+    } else if (activeZone === 'left') {
+      setLeftTemp(temp);
+    } else {
+      setRightTemp(temp);
+    }
+  };
   const isCurrentActive = activeZone === 'left' ? leftActive : rightActive;
   const bothActive = leftActive && rightActive;
 
